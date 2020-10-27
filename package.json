@@ -8,6 +8,7 @@
     "eject": "expo eject"
   },
   "dependencies": {
+    "cors": "^2.8.5",
     "expo": "~39.0.2",
     "expo-status-bar": "~1.0.2",
     "express": "^4.17.1",
