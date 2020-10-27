@@ -42,7 +42,7 @@ export default class App extends React.Component {
   render() {
     return (
       <View style={styles.container}>
-        <MapView style={styles.mapStyle} initialRegion={this.state.position}>
+        <MapView style={styles.mapStyle} region={this.state.position}>
           {/* DISPLAY MARKERS ARRAY */}
           {/* <Marker
             coordinate={{
