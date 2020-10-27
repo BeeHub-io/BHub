@@ -8,6 +8,7 @@
     "eject": "expo eject"
   },
   "dependencies": {
+    "@react-native-community/geolocation": "^2.0.2",
     "expo": "~39.0.2",
     "expo-status-bar": "~1.0.2",
     "express": "^4.17.1",
