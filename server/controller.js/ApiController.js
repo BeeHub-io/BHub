@@ -14,7 +14,7 @@ controller.getAllRestaurants = async (req, res, next) => {
                 // OR if we want to specify restaurants we need to do it manually 
                 // e.g array of restaurants to filter out
                 const notFranchises = data.filter(el => el.review_count < 50);
-                res.locals.allFiltredRestaurants = notFranchises;
+                res.locals.allFilteredRestaurants = notFranchises;
                 return next();
               });
     } catch(err) {
