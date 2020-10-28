@@ -16,8 +16,9 @@ export default class App extends React.Component {
         latitudeDelta: 0.05,
         longitudeDelta: 0.05,
       },
-      radius: 8047,
+      radius: 500,
       search: '',
+      results: []
     };
   }
 
@@ -37,25 +38,25 @@ export default class App extends React.Component {
       };
       this.setState({ position: newPosition });
     });
-    fetch('http://192.168.1.127:3333/api/getAll', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        latitude: this.state.position.latitude,
-        longitude: this.state.position.longitude,
-      }),
-    })
-      .then((data) => data.json())
-      .then((result) => console.log(result))
-      .catch((err) =>
-        console.log('ERROR IN COMPONENT DID MOUNT > FETCH > POST ERROR: ', err)
-      );
+    // fetch('http://192.168.1.127:3333/api/getAll', {
+    //   method: 'POST',
+    //   headers: { 'Content-Type': 'application/json' },
+    //   body: JSON.stringify({
+    //     latitude: this.state.position.latitude,
+    //     longitude: this.state.position.longitude,
+    //   }),
+    // })
+    //   .then((data) => data.json())
+    //   .then((result) => console.log(result))
+    //   .catch((err) =>
+    //     console.log('ERROR IN COMPONENT DID MOUNT > FETCH > POST ERROR: ', err)
+    //   );
 
     let latitude = this.state.position.latitude;
     let longitude = this.state.position.longitude;
     let radius = this.state.radius;
     const queryAllString = `?latitude=${latitude}&longitude=${longitude}&radius=${radius}`;
-    fetch(`https://api.yelp.com/v3/businesses/search${queryAllString}`, {
+    fetch(`https://api.yelp.com/v3/businesses/search${queryAllString}` + `&price=1`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -69,7 +70,9 @@ export default class App extends React.Component {
         // OR if we want to specify restaurants we need to do it manually
         // e.g array of restaurants to filter out
         // const notFranchises = data.filter((el) => el.review_count < 50);
-        console.log('data: ', data);
+        // console.log('data: ', data);
+        this.setState({ results: data.businesses });
+        console.log(this.state.results);
       })
       .catch((err) =>
         console.log(
@@ -88,6 +91,26 @@ export default class App extends React.Component {
   };
 
   render() {
+
+    const resultsArr = this.state.results.map(el => {
+      return (
+        <Marker
+          coordinate={{
+            latitude: el.coordinates.latitude,
+            longitude: el.coordinates.longitude,
+          }}
+          pinColor='red'
+          key={el.id}
+        >
+          <Callout>
+            <Text>Name: {el.name}</Text>
+            <Text>Address: {el.location.display_address}</Text>
+          </Callout>
+        </Marker>
+      )
+    });
+
+
     return (
       <View style={styles.viewStyle}>
         <View style={styles.searchView}>
@@ -109,7 +132,7 @@ export default class App extends React.Component {
           />
         </View>
         <MapView style={styles.mapStyle} region={this.state.position}>
-          {/* DISPLAY MARKERS ARRAY */}
+          {resultsArr}
           <Marker
             coordinate={{
               latitude: this.state.position.latitude,
@@ -118,8 +141,7 @@ export default class App extends React.Component {
             pinColor='blue'
           >
             <Callout>
-              <Text>Name: Restaurant</Text>
-              <Text>Description: dsafljfdslakfs</Text>
+              <Text>Current Location</Text>
             </Callout>
           </Marker>
         </MapView>
