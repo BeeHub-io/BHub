@@ -8,7 +8,11 @@
     "eject": "expo eject"
   },
   "dependencies": {
+<<<<<<< HEAD
     "cors": "^2.8.5",
+=======
+    "@react-native-community/geolocation": "^2.0.2",
+>>>>>>> d6b6e1277ece89490f1ef1a8f81e375f60a747d9
     "expo": "~39.0.2",
     "expo-status-bar": "~1.0.2",
     "express": "^4.17.1",
