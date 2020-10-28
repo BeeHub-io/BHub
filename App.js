@@ -50,10 +50,7 @@ export default class App extends React.Component {
       .catch((err) =>
         console.log('ERROR IN COMPONENT DID MOUNT > FETCH > POST ERROR: ', err)
       );
-  }
 
-  componentDidUpdate() {
-    console.log('YOOO THIS SOME HOOPLAH: ', this.state);
     let latitude = this.state.position.latitude;
     let longitude = this.state.position.longitude;
     let radius = this.state.radius;
@@ -62,7 +59,7 @@ export default class App extends React.Component {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization':
+        Authorization:
           'Bearer BHgF17sVB1nq84WpSrlu-w8fiCq3VIwXsImhNA1AZjcPt7UFCPuebY8nhglwQV5PYdnLCkUbM8Gw23SYrL0scYR_T9K6w_unJVqZ5H2wRgt29ORpu9X8F-5WKaKYX3Yx',
       },
     })
@@ -82,6 +79,10 @@ export default class App extends React.Component {
       );
   }
 
+  componentDidUpdate() {
+    console.log('YOOO THIS SOME HOOPLAH: ', this.state);
+  }
+
   updateSearch = (search) => {
     this.setState({ search });
   };
@@ -89,16 +90,24 @@ export default class App extends React.Component {
   render() {
     return (
       <View style={styles.viewStyle}>
-        {/* DISPLAY SEARCH BAR */}
-        <SearchBar
-          round
-          lightTheme
-          searchIcon={{ size: 36 }}
-          style={styles.searchBar}
-          placeholder='Search'
-          onChangeText={this.updateSearch}
-          value={this.state.search}
-        />
+        <View style={styles.searchView}>
+          {/* DISPLAY SEARCH BAR */}
+          <SearchBar
+            // inputStyle={{ backgroundColor: 'white' }}
+            containerStyle={{
+              backgroundColor: 'none',
+              border: 'none',
+              color: 'none',
+            }}
+            round
+            lightTheme
+            searchIcon={{ size: 36 }}
+            style={styles.searchBar}
+            placeholder='Search'
+            onChangeText={this.updateSearch}
+            value={this.state.search}
+          />
+        </View>
         <MapView style={styles.mapStyle} region={this.state.position}>
           {/* DISPLAY MARKERS ARRAY */}
           <Marker
@@ -120,11 +129,19 @@ export default class App extends React.Component {
 }
 
 const styles = StyleSheet.create({
+  viewStyle: {},
+  searchView: {
+    position: 'relative',
+    top: 40,
+    zIndex: 1,
+  },
   mapStyle: {
     width: Dimensions.get('window').width,
     height: Dimensions.get('window').height,
+    zIndex: 0,
+    position: 'absolute',
   },
   searchBar: {
-    marginTop: Platform.OS == 'ios' ? 10 : 0,
+    borderTopLeftRadius: 100,
   },
 });
