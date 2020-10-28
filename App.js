@@ -1,6 +1,7 @@
 import React from 'react';
-import MapView, { Marker } from 'react-native-maps';
-import { StyleSheet, Text, View, Dimensions } from 'react-native';
+import MapView, { Callout, Marker } from 'react-native-maps';
+import { StyleSheet, Text, View, Dimensions, TextInput } from 'react-native';
+import { SearchBar } from 'react-native-elements';
 // import Geolocation from '@react-native-community/geolocation';
 
 export default class App extends React.Component {
@@ -14,6 +15,7 @@ export default class App extends React.Component {
         latitudeDelta: 0.05,
         longitudeDelta: 0.05,
       },
+      search: '',
     };
   }
 
@@ -39,18 +41,36 @@ export default class App extends React.Component {
     console.log('YOOO THIS SOME HOOPLAH: ', this.state);
   }
 
+  updateSearch = (search) => {
+    this.setState({ search });
+  };
+
   render() {
+    const { search } = this.state;
     return (
       <View style={styles.container}>
+        <View>
+          <SearchBar
+            style={styles.textInput}
+            placeholder='Type Here...'
+            onChangeText={this.updateSearch}
+            value={search}
+          />
+        </View>
         <MapView style={styles.mapStyle} region={this.state.position}>
           {/* DISPLAY MARKERS ARRAY */}
-          {/* <Marker
+          <Marker
             coordinate={{
-              latitude: 37.78825329977967,
-              longitude: -122.4324329977967,
+              latitude: this.state.position.latitude,
+              longitude: this.state.position.longitude,
             }}
             pinColor='blue'
-          /> */}
+          >
+            <Callout>
+              <Text>Name: Restaurant</Text>
+              <Text>Description: dsafljfdslakfs</Text>
+            </Callout>
+          </Marker>
         </MapView>
       </View>
     );
@@ -67,5 +87,9 @@ const styles = StyleSheet.create({
   mapStyle: {
     width: Dimensions.get('window').width,
     height: Dimensions.get('window').height,
+  },
+  textInput: {
+    paddingTop: 200,
+    height: 20,
   },
 });
