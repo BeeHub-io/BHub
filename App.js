@@ -2,6 +2,7 @@ import React from 'react';
 import MapView, { Callout, Marker } from 'react-native-maps';
 import { StyleSheet, Text, View, Dimensions, TextInput } from 'react-native';
 import { SearchBar } from 'react-native-elements';
+import axios from 'axios';
 // import Geolocation from '@react-native-community/geolocation';
 
 export default class App extends React.Component {
@@ -35,6 +36,15 @@ export default class App extends React.Component {
       };
       this.setState({ position: newPosition });
     });
+    axios
+      .post('/api', {
+        latitude: newPosition.latitude,
+        longitude: newPosition.longitude,
+      })
+      .then(() => console.log('Position was sent to server!'))
+      .catch((err) =>
+        console.log('ERROR IN COMPONENT DID MOUNT > AXIOS > POST ERROR: ', err)
+      );
   }
 
   componentDidUpdate() {
