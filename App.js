@@ -36,14 +36,27 @@ export default class App extends React.Component {
       };
       this.setState({ position: newPosition });
     });
-    axios
-      .post('/api', {
+    // axios
+    //   .post('192.168.1.127:19000/api', {
+    //     latitude: this.state.position.latitude,
+    //     longitude: this.state.position.longitude,
+    //   })
+    //   .then(() => console.log('Position was sent to server!'))
+    //   .catch((err) =>
+    //     console.log('ERROR IN COMPONENT DID MOUNT > AXIOS > POST ERROR: ', err)
+    //   );
+    fetch('https://localhost:3333/api/getAll', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
         latitude: this.state.position.latitude,
         longitude: this.state.position.longitude,
-      })
-      .then(() => console.log('Position was sent to server!'))
+      }),
+    })
+      .then((data) => data.json())
+      .then((result) => console.log(result))
       .catch((err) =>
-        console.log('ERROR IN COMPONENT DID MOUNT > AXIOS > POST ERROR: ', err)
+        console.log('ERROR IN COMPONENT DID MOUNT > FETCH > POST ERROR: ', err)
       );
   }
 
