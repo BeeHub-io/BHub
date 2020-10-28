@@ -38,8 +38,8 @@ export default class App extends React.Component {
     });
     axios
       .post('/api', {
-        latitude: newPosition.latitude,
-        longitude: newPosition.longitude,
+        latitude: this.state.position.latitude,
+        longitude: this.state.position.longitude,
       })
       .then(() => console.log('Position was sent to server!'))
       .catch((err) =>
