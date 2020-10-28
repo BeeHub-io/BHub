@@ -46,17 +46,18 @@ export default class App extends React.Component {
   };
 
   render() {
-    const { search } = this.state;
     return (
-      <View style={styles.container}>
-        <View>
-          <SearchBar
-            style={styles.textInput}
-            placeholder='Type Here...'
-            onChangeText={this.updateSearch}
-            value={search}
-          />
-        </View>
+      <View style={styles.viewStyle}>
+        {/* DISPLAY SEARCH BAR */}
+        <SearchBar
+          round
+          lightTheme
+          searchIcon={{ size: 36 }}
+          style={styles.searchBar}
+          placeholder=''
+          onChangeText={this.updateSearch}
+          value={this.state.search}
+        />
         <MapView style={styles.mapStyle} region={this.state.position}>
           {/* DISPLAY MARKERS ARRAY */}
           <Marker
@@ -78,18 +79,11 @@ export default class App extends React.Component {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
   mapStyle: {
     width: Dimensions.get('window').width,
     height: Dimensions.get('window').height,
   },
-  textInput: {
-    paddingTop: 200,
-    height: 20,
+  searchBar: {
+    marginTop: Platform.OS == 'ios' ? 10 : 0,
   },
 });
