@@ -58,12 +58,12 @@ export default class App extends React.Component {
     let longitude = this.state.position.longitude;
     let radius = this.state.radius;
     const queryAllString = `?latitude=${latitude}&longitude=${longitude}&radius=${radius}`;
-    fetch(`https://api.yelp.com/v3/businesses/search/${queryAllString}/`, {
+    fetch(`https://api.yelp.com/v3/businesses/search${queryAllString}`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
-        Authorization:
-          'BHgF17sVB1nq84WpSrlu-w8fiCq3VIwXsImhNA1AZjcPt7UFCPuebY8nhglwQV5PYdnLCkUbM8Gw23SYrL0scYR_T9K6w_unJVqZ5H2wRgt29ORpu9X8F-5WKaKYX3Yx',
+        'Authorization':
+          'Bearer BHgF17sVB1nq84WpSrlu-w8fiCq3VIwXsImhNA1AZjcPt7UFCPuebY8nhglwQV5PYdnLCkUbM8Gw23SYrL0scYR_T9K6w_unJVqZ5H2wRgt29ORpu9X8F-5WKaKYX3Yx',
       },
     })
       .then((response) => response.json())
