@@ -1,6 +1,7 @@
 const express = require('express');
 const app = express();
 const routes = require('./routes');
+const cors = require('cors');
 const PORT = 3333;
 
 // handle incoming json files
@@ -8,6 +9,9 @@ app.use(express.json());
 
 // handle form submissions
 app.use(express.urlencoded({ extended: true }));
+
+// handle cors
+app.use(cors());
 
 // handle api reqs
 app.use('/api', routes);

@@ -1,6 +1,8 @@
 import React from 'react';
-import MapView, { Marker } from 'react-native-maps';
-import { StyleSheet, Text, View, Dimensions } from 'react-native';
+import MapView, { Callout, Marker } from 'react-native-maps';
+import { StyleSheet, Text, View, Dimensions, TextInput } from 'react-native';
+import { SearchBar } from 'react-native-elements';
+import axios from 'axios';
 // import Geolocation from '@react-native-community/geolocation';
 
 export default class App extends React.Component {
@@ -14,6 +16,7 @@ export default class App extends React.Component {
         latitudeDelta: 0.05,
         longitudeDelta: 0.05,
       },
+      search: '',
     };
   }
 
@@ -33,24 +36,52 @@ export default class App extends React.Component {
       };
       this.setState({ position: newPosition });
     });
+    axios
+      .post('/api', {
+        latitude: newPosition.latitude,
+        longitude: newPosition.longitude,
+      })
+      .then(() => console.log('Position was sent to server!'))
+      .catch((err) =>
+        console.log('ERROR IN COMPONENT DID MOUNT > AXIOS > POST ERROR: ', err)
+      );
   }
 
   componentDidUpdate() {
     console.log('YOOO THIS SOME HOOPLAH: ', this.state);
   }
 
+  updateSearch = (search) => {
+    this.setState({ search });
+  };
+
   render() {
     return (
-      <View style={styles.container}>
+      <View style={styles.viewStyle}>
+        {/* DISPLAY SEARCH BAR */}
+        <SearchBar
+          round
+          lightTheme
+          searchIcon={{ size: 36 }}
+          style={styles.searchBar}
+          placeholder=''
+          onChangeText={this.updateSearch}
+          value={this.state.search}
+        />
         <MapView style={styles.mapStyle} region={this.state.position}>
           {/* DISPLAY MARKERS ARRAY */}
-          {/* <Marker
+          <Marker
             coordinate={{
-              latitude: 37.78825329977967,
-              longitude: -122.4324329977967,
+              latitude: this.state.position.latitude,
+              longitude: this.state.position.longitude,
             }}
             pinColor='blue'
-          /> */}
+          >
+            <Callout>
+              <Text>Name: Restaurant</Text>
+              <Text>Description: dsafljfdslakfs</Text>
+            </Callout>
+          </Marker>
         </MapView>
       </View>
     );
@@ -58,14 +89,11 @@ export default class App extends React.Component {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
   mapStyle: {
     width: Dimensions.get('window').width,
     height: Dimensions.get('window').height,
+  },
+  searchBar: {
+    marginTop: Platform.OS == 'ios' ? 10 : 0,
   },
 });
