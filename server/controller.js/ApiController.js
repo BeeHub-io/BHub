@@ -1,21 +1,21 @@
 const db = require('../models/TaskModel');
 const controller = {};
 
-// Handle initial request to yelp api to retrieve all restaurants
+// Handle initial request to yelp api to retrieve all restaurants.
 controller.getAllRestaurants = async (req, res, next) => {
-    //destructure lon and lat from req.body
-    const { longitude, latitude } = req.body;
-
-    // radius ~5
-    const queryAllString = `?latitude=${latitude}&longitude=${longitude}&radius=8046.72`;
+    // destructure LON, LAT, and radius from req.body. radius defaults to 5 miles
+    const { longitude, latitude, radius = 8046.72 } = req.body;
+    const queryAllString = `?latitude=${latitude}&longitude=${longitude}&radius=${radius}`;
     try {
         await fetch(`https://api.yelp.com/v3/businesses/search/${queryAllString}/`)
               .then(response => response.json())
-              // filter out restaurants with more than 200 reviews
-              // filterout out chains and franchises
               .then(data => {
-                  console.log(data)
-                  return next();
+                // filterout out chains and franchises, with more than 50 reviews ??
+                // OR if we want to specify restaurants we need to do it manually 
+                // e.g array of restaurants to filter out
+                const notFranchises = data.filter(el => el.review_count < 50);
+                res.locals.allFiltredRestaurants = notFranchises;
+                return next();
               });
     } catch(err) {
         return next(err);
@@ -24,11 +24,10 @@ controller.getAllRestaurants = async (req, res, next) => {
 
 // Handle search bar query
 controller.search = async (req, res, next) => {
-    // destructure restaurant to query for
-    const { locale } = req.body;
-
+    // destructure restaurant to query for. radius defaults is 5 miles
+    const { longitude, latitude, locale, radius = 8046.72 } = req.body;
     // create query string to use
-    const querySearchString = `?term=${locale}`;
+    const querySearchString = `?term=${locale}&latitude=${latitude}&longitude=${longitude}&radius=${radius}`;
     try { 
         // insert query string to fetch end point
         await fetch(`https://api.yelp.com/v3/businesses/search/${querySearchString}/`)
