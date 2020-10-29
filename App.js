@@ -2,8 +2,9 @@ import React from 'react';
 import MapView, { Callout, Marker } from 'react-native-maps';
 import { StyleSheet, Text, View, Dimensions, TextInput } from 'react-native';
 import { SearchBar } from 'react-native-elements';
-import axios from 'axios';
-// import Geolocation from '@react-native-community/geolocation';
+import { createAppContainer, createSwitchNavigator } from 'react-navigation';
+import LoginScreen from './screens/LoginScreen';
+import ProfileScreen from './screens/ProfileScreen';
 
 export default class App extends React.Component {
   // NEED STATE TO HOLD STUFF
@@ -88,7 +89,7 @@ export default class App extends React.Component {
           err
         )
       );
-  }
+  };
   // BUILD A ONCLICK FUNCTION FOR WHEN THE MARKER IS CLICKED
 
   // SHOULD HAPPEN WITH COMPONENT DID MOUNT
