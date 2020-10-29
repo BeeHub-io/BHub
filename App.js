@@ -16,7 +16,7 @@ export default class App extends React.Component {
         latitudeDelta: 0.05,
         longitudeDelta: 0.05,
       },
-      radius: 1000,
+      radius: 5000,
       search: '',
       results: [],
     };
@@ -55,6 +55,40 @@ export default class App extends React.Component {
         )
       );
   };
+  getSearch = () => {
+    let latitude = this.state.position.latitude;
+    let longitude = this.state.position.longitude;
+    let radius = this.state.radius;
+    let newSearch = this.state.search;
+    const queryAllString = `?term=${newSearch}&latitude=${latitude}&longitude=${longitude}&radius=${radius}`;
+    fetch(
+      `https://api.yelp.com/v3/businesses/search${queryAllString}` + `&price=1`,
+      {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization:
+            'Bearer BHgF17sVB1nq84WpSrlu-w8fiCq3VIwXsImhNA1AZjcPt7UFCPuebY8nhglwQV5PYdnLCkUbM8Gw23SYrL0scYR_T9K6w_unJVqZ5H2wRgt29ORpu9X8F-5WKaKYX3Yx',
+        },
+      }
+    )
+      .then((response) => response.json())
+      .then((data) => {
+        // filter out out chains and franchises, with more than 50 reviews ??
+        // OR if we want to specify restaurants we need to do it manually
+        // e.g array of restaurants to filter out
+        // const notFranchises = data.filter((el) => el.review_count < 50);
+        // console.log('data: ', data);
+        this.setState({ results: data.businesses });
+        console.log(this.state.results);
+      })
+      .catch((err) =>
+        console.log(
+          'ERROR IN COMPONENT DID MOUNT > FETCH > YELP API ERROR: ',
+          err
+        )
+      );
+  }
   // BUILD A ONCLICK FUNCTION FOR WHEN THE MARKER IS CLICKED
 
   // SHOULD HAPPEN WITH COMPONENT DID MOUNT
@@ -120,6 +154,7 @@ export default class App extends React.Component {
             placeholder='Search'
             onChangeText={this.updateSearch}
             value={this.state.search}
+            onSubmitEditing={this.getSearch}
           />
         </View>
         <MapView style={styles.mapStyle} region={this.state.position}>
