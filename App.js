@@ -16,54 +16,28 @@ export default class App extends React.Component {
         latitudeDelta: 0.05,
         longitudeDelta: 0.05,
       },
-      radius: 500,
+      radius: 1000,
       search: '',
-      results: []
+      results: [],
     };
   }
 
-  // BUILD A ONCLICK FUNCTION FOR WHEN THE MARKER IS CLICKED
-
-  // SHOULD HAPPEN WITH COMPONENT DID MOUNT
-  componentDidMount() {
-    // A FUNCTION THAT SENDS LONGITUDE AND LATITUDE TO BACKEND THAT RECEIVES LIST OF RESTAURANTS THAT MAPS IT INTO MARKER JSX FORMAT INTO AN ARRAY
-    navigator.geolocation.getCurrentPosition((position) => {
-      console.log('current position: ', position);
-      console.log('latitude: ', position['coords']['latitude']);
-      let newPosition = {
-        latitude: position['coords']['latitude'],
-        longitude: position['coords']['longitude'],
-        latitudeDelta: 0.05,
-        longitudeDelta: 0.05,
-      };
-      this.setState({ position: newPosition });
-    });
-    // fetch('http://192.168.1.127:3333/api/getAll', {
-    //   method: 'POST',
-    //   headers: { 'Content-Type': 'application/json' },
-    //   body: JSON.stringify({
-    //     latitude: this.state.position.latitude,
-    //     longitude: this.state.position.longitude,
-    //   }),
-    // })
-    //   .then((data) => data.json())
-    //   .then((result) => console.log(result))
-    //   .catch((err) =>
-    //     console.log('ERROR IN COMPONENT DID MOUNT > FETCH > POST ERROR: ', err)
-    //   );
-
+  getYelp = () => {
     let latitude = this.state.position.latitude;
     let longitude = this.state.position.longitude;
     let radius = this.state.radius;
     const queryAllString = `?latitude=${latitude}&longitude=${longitude}&radius=${radius}`;
-    fetch(`https://api.yelp.com/v3/businesses/search${queryAllString}` + `&price=1`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization:
-          'Bearer BHgF17sVB1nq84WpSrlu-w8fiCq3VIwXsImhNA1AZjcPt7UFCPuebY8nhglwQV5PYdnLCkUbM8Gw23SYrL0scYR_T9K6w_unJVqZ5H2wRgt29ORpu9X8F-5WKaKYX3Yx',
-      },
-    })
+    fetch(
+      `https://api.yelp.com/v3/businesses/search${queryAllString}` + `&price=1`,
+      {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization:
+            'Bearer BHgF17sVB1nq84WpSrlu-w8fiCq3VIwXsImhNA1AZjcPt7UFCPuebY8nhglwQV5PYdnLCkUbM8Gw23SYrL0scYR_T9K6w_unJVqZ5H2wRgt29ORpu9X8F-5WKaKYX3Yx',
+        },
+      }
+    )
       .then((response) => response.json())
       .then((data) => {
         // filter out out chains and franchises, with more than 50 reviews ??
@@ -80,10 +54,29 @@ export default class App extends React.Component {
           err
         )
       );
+  };
+  // BUILD A ONCLICK FUNCTION FOR WHEN THE MARKER IS CLICKED
+
+  // SHOULD HAPPEN WITH COMPONENT DID MOUNT
+  componentDidMount() {
+    // A FUNCTION THAT SENDS LONGITUDE AND LATITUDE TO BACKEND THAT RECEIVES LIST OF RESTAURANTS THAT MAPS IT INTO MARKER JSX FORMAT INTO AN ARRAY
+    navigator.geolocation.getCurrentPosition((position) => {
+      console.log('current position: ', position);
+      console.log('latitude: ', position['coords']['latitude']);
+      let newPosition = {
+        latitude: position['coords']['latitude'],
+        longitude: position['coords']['longitude'],
+        latitudeDelta: 0.05,
+        longitudeDelta: 0.05,
+      };
+      this.setState({ position: newPosition });
+      this.getYelp();
+    });
   }
 
   componentDidUpdate() {
     console.log('YOOO THIS SOME HOOPLAH: ', this.state);
+    // this.getYelp();
   }
 
   updateSearch = (search) => {
@@ -91,8 +84,7 @@ export default class App extends React.Component {
   };
 
   render() {
-
-    const resultsArr = this.state.results.map(el => {
+    const resultsArr = this.state.results.map((el) => {
       return (
         <Marker
           coordinate={{
@@ -107,9 +99,8 @@ export default class App extends React.Component {
             <Text>Address: {el.location.display_address}</Text>
           </Callout>
         </Marker>
-      )
+      );
     });
-
 
     return (
       <View style={styles.viewStyle}>
