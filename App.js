@@ -1,10 +1,11 @@
 import React from 'react';
 import MapView, { Callout, Marker } from 'react-native-maps';
-import { StyleSheet, Text, View, Dimensions, TextInput } from 'react-native';
+import { StyleSheet, Text, View, Dimensions, Button } from 'react-native';
 import { SearchBar } from 'react-native-elements';
-import { createAppContainer, createSwitchNavigator } from 'react-navigation';
-import LoginScreen from './screens/LoginScreen';
-import ProfileScreen from './screens/ProfileScreen';
+import * as Google from 'expo-google-app-auth';
+
+const IOS_CLIENT_ID =
+  '620395064803-ne7653344g2f152ed4kql428u3puc7fg.apps.googleusercontent.com';
 
 export default class App extends React.Component {
   // NEED STATE TO HOLD STUFF
@@ -20,8 +21,31 @@ export default class App extends React.Component {
       radius: 5000,
       search: '',
       results: [],
+      loggedIn: false,
     };
   }
+
+  signInWithGoogle = async () => {
+    try {
+      const result = await Google.logInAsync({
+        iosClientId: IOS_CLIENT_ID,
+        scopes: ['profile', 'email'],
+      });
+
+      if (result.type === 'success') {
+        console.log('LoginScreen.js.js 21 | ', result.user.givenName);
+        this.props.navigation.navigate('Profile', {
+          username: result.user.givenName,
+        }); //after Google login redirect to Profile
+        return result.accessToken;
+      } else {
+        return { cancelled: true };
+      }
+    } catch (e) {
+      console.log('LoginScreen.js.js 30 | Error with login', e);
+      return { error: true };
+    }
+  };
 
   getYelp = () => {
     let latitude = this.state.position.latitude;
@@ -56,6 +80,7 @@ export default class App extends React.Component {
         )
       );
   };
+
   getSearch = () => {
     let latitude = this.state.position.latitude;
     let longitude = this.state.position.longitude;
@@ -139,39 +164,40 @@ export default class App extends React.Component {
 
     return (
       <View style={styles.viewStyle}>
-        <View style={styles.searchView}>
-          {/* DISPLAY SEARCH BAR */}
-          <SearchBar
-            // inputStyle={{ backgroundColor: 'white' }}
-            containerStyle={{
-              backgroundColor: 'none',
-              border: 'none',
-              color: 'none',
-            }}
-            round
-            lightTheme
-            searchIcon={{ size: 36 }}
-            style={styles.searchBar}
-            placeholder='Search'
-            onChangeText={this.updateSearch}
-            value={this.state.search}
-            onSubmitEditing={this.getSearch}
-          />
+        <View>
+          <View style={styles.searchView}>
+            <Button title='Login with Google' onPress={this.signInWithGoogle} />
+            <SearchBar
+              containerStyle={{
+                backgroundColor: 'none',
+                border: 'none',
+                color: 'none',
+              }}
+              round
+              lightTheme
+              searchIcon={{ size: 36 }}
+              style={styles.searchBar}
+              placeholder='Search'
+              onChangeText={this.updateSearch}
+              value={this.state.search}
+              onSubmitEditing={this.getSearch}
+            />
+          </View>
+          <MapView style={styles.mapStyle} region={this.state.position}>
+            {resultsArr}
+            <Marker
+              coordinate={{
+                latitude: this.state.position.latitude,
+                longitude: this.state.position.longitude,
+              }}
+              pinColor='blue'
+            >
+              <Callout>
+                <Text>Current Location</Text>
+              </Callout>
+            </Marker>
+          </MapView>
         </View>
-        <MapView style={styles.mapStyle} region={this.state.position}>
-          {resultsArr}
-          <Marker
-            coordinate={{
-              latitude: this.state.position.latitude,
-              longitude: this.state.position.longitude,
-            }}
-            pinColor='blue'
-          >
-            <Callout>
-              <Text>Current Location</Text>
-            </Callout>
-          </Marker>
-        </MapView>
       </View>
     );
   }
